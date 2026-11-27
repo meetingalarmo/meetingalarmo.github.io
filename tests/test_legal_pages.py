@@ -112,6 +112,9 @@ class LegalPagesTests(unittest.TestCase):
         self.assertTrue(required_sections.issubset(parser.ids))
         for disclosure in (
             "Firebase Crashlytics",
+            "Google Cloud Firestore",
+            "optional contact email",
+            "app version, build number",
             "Firebase Analytics is not included",
             "90 days",
             "does not offer an in-app diagnostic collection switch",
@@ -119,6 +122,13 @@ class LegalPagesTests(unittest.TestCase):
         ):
             with self.subTest(disclosure=disclosure):
                 self.assertIn(disclosure, content)
+
+    def test_published_pages_use_current_app_name(self):
+        for relative_path in self.pages:
+            with self.subTest(page=relative_path):
+                content = (DOCS / relative_path).read_text(encoding="utf-8")
+                self.assertIn("Timertempo", content)
+                self.assertNotIn("Timerval", content)
 
     def test_terms_cover_products_safety_and_standard_eula_choice(self):
         path, parser = parse_page(Path("terms/index.html"))
